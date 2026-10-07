@@ -1,0 +1,46 @@
+{
+  "roster": [
+    {
+      "name": "researcher",
+      "title": "Researcher",
+      "model": "small-local",
+      "skills": ["web-search", "summarize"],
+      "tools": ["browser", "notes"],
+      "persona": "Gathers sources, records dead ends, and hands a structured packet to the coder. Never touches the repo."
+    },
+    {
+      "name": "coder",
+      "title": "Coder",
+      "model": "frontier",
+      "skills": ["edit-code", "run-tests"],
+      "tools": ["editor", "terminal"],
+      "persona": "Implements the change inside the stated constraints. Reads the handoff packet before writing a line."
+    },
+    {
+      "name": "reviewer",
+      "title": "Reviewer",
+      "model": "mid",
+      "skills": ["read-diff", "request-changes"],
+      "tools": ["diff-viewer"],
+      "persona": "Checks the diff against the done-condition. Requests changes or signs off — never edits code."
+    }
+  ],
+  "task": {
+    "id": "rate-limit-login",
+    "goal": "Add rate limiting to POST /api/login",
+    "constraints": ["no new dependencies", "keep the existing token format", "respond 429 with Retry-After"],
+    "skill": "web-search",
+    "skillByBot": {
+      "researcher": "web-search",
+      "coder": "edit-code",
+      "reviewer": "read-diff"
+    },
+    "pipeline": ["researcher", "coder", "reviewer"],
+    "done": "reviewer sign-off",
+    "findings": {
+      "researcher": "2 candidate approaches; sliding-window rejected (constraint: no new deps)",
+      "coder": "implemented in-memory bucket; tests pass",
+      "reviewer": "diff matches constraints"
+    }
+  }
+}

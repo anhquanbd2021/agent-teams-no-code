@@ -1,0 +1,16 @@
+{
+  "name": "agent-teams-no-code-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Handoff Lab — configure a bot team, then watch which context survives the handoff seam. Zero-dependency Node 20+.",
+  "scripts": {
+    "start": "node app/server.js",
+    "report": "node scripts/report.mjs",
+    "test": "node --test \"test/*.test.mjs\"",
+    "check": "npm test && npm run report"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

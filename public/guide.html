@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Guide to Handoff Lab — what each mechanism proves and how it maps to no-code bot teams like Hermes Desktop Bot Mode.">
+  <title>Handoff Lab Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,600,700,800|JetBrains+Mono:400,700,800&display=swap&subset=vietnamese">
+  <link rel="stylesheet" href="/styles.css">
+<!-- pb-shell --><link rel="stylesheet" href="./pb-shell.css"><!-- pb-shell --><!-- pb-back --><link rel="stylesheet" href="./pb-back.css"><!-- pb-back --></head>
+<body>
+<main>
+  <nav aria-label="Primary"><a href="/">Lab</a><a aria-current="page" href="/guide.html">Guide</a><a href="https://github.com/anhquanbd2021/agent-teams-no-code">Source</a></nav>
+  <header class="hero hero--compact">
+    <p class="eyebrow">Guide</p>
+    <h1>What "a team of agents" actually needs</h1>
+    <p class="lede">Products like Bot Mode for Hermes Desktop make the roster free: each bot is a role card — pinned model, enabled skills, private memory, persona — assembled in a dialog. This lab shows the four decisions the dialog cannot make for you.</p>
+    <p class="warning"><strong>Simulation, honest limits.</strong> No models are called; the lab models the <em>shape</em> of handoff, isolation, and termination — not any product's internals.</p>
+  </header>
+
+  <section class="panel" aria-labelledby="start-title">
+    <div class="panel-head"><p class="eyebrow">Start here</p><h2 id="start-title">What this demo proves</h2></div>
+    <p>Run the pipeline twice: once with a <strong>thin handoff</strong> (only a message crosses the seam — every packet field dies) and once <strong>structured</strong> (goal, constraints, evidence, artifacts, done-condition survive). Then try to read another bot's memory, gate a skill the card never enabled, and run a reviewer↔coder loop with and without a done-condition.</p>
+    <p><a class="try" href="/">Open the lab</a></p>
+  </section>
+
+  <section class="guide-section" aria-labelledby="mech-title">
+    <p class="eyebrow">The mechanisms</p>
+    <h2 id="mech-title">What to watch</h2>
+    <div class="control-grid">
+      <article class="panel control"><span class="control-number">01</span><h3>The handoff contract</h3><p>A message is a summary the sender chose to write. The packet — <code>goal / constraints / evidence / artifacts / done</code> — is the contract that keeps the next bot from re-doing the work. Thin mode drops all five fields at every seam; structured mode flags any field the sender forgot.</p><dl><dt>Try it</dt><dd>"Compare both modes" — thin loses 10 fields across two seams; structured loses zero.</dd></dl></article>
+      <article class="panel control"><span class="control-number">02</span><h3>Scoped memory</h3><p>Each bot's memory lives inside its profile. The coder cannot read the researcher's findings — it sees only what the handoff delivered. Denials are audited exactly like allows.</p><dl><dt>Try it</dt><dd>Act as <code>coder</code>, read <code>researcher.findings</code> — denied and logged.</dd></dl></article>
+      <article class="panel control"><span class="control-number">03</span><h3>Skill gating</h3><p>The role card is also a least-privilege grant: a bot can only use skills its card enables. The researcher attempting <code>edit-code</code> is denied — the card, not the prompt, is the enforcement.</p><dl><dt>Try it</dt><dd>"Researcher attempts edit-code" — denied with the reason named.</dd></dl></article>
+      <article class="panel control"><span class="control-number">04</span><h3>Termination</h3><p>Bots are polite and indefatigable: without a done-condition, a request-changes loop only stops when the round cap cuts it. Every exchange is billed.</p><dl><dt>Try it</dt><dd>Run the loop unchecked — cap cuts it; check "done-condition" and it ends at round 2.</dd></dl></article>
+    </div>
+  </section>
+
+  <section class="guide-section" aria-labelledby="arch-title">
+    <p class="eyebrow">Architecture</p>
+    <h2 id="arch-title">How the demo is built</h2>
+    <div class="table-wrap panel"><table><thead><tr><th>Layer</th><th>Behavior</th><th>Evidence</th></tr></thead><tbody><tr><td>Team model</td><td>Role cards, private memory, skill gating, thin/structured handoffs, round-capped loops, attributed audit. Pure ES module shared by browser, CLI, and tests.</td><td><code>public/team.mjs</code></td></tr><tr><td>Scenario</td><td>Seeded 3-bot roster + task and 8 scripted steps with expected outcomes; browser replay and CLI report share it.</td><td><code>public/scenario.mjs</code> · <code>examples/team-config.json</code></td></tr><tr><td>Server</td><td>Zero-dependency static host plus /health and /version. No build step.</td><td><code>app/server.js</code></td></tr></tbody></table></div>
+  </section>
+
+  <section class="guide-section" aria-labelledby="run-title">
+    <p class="eyebrow">Run locally</p>
+    <h2 id="run-title">Inspect the evidence</h2>
+    <pre class="code-block">npm test         # team model + scenario + server
+npm run report   # thin-vs-structured field survival + scripted outcomes
+npm run check    # both
+npm start        # serve the lab on :3000</pre>
+    <p>Everything is in-memory — restart the lab and the world resets.</p>
+  </section>
+
+  <section class="guide-section panel" aria-labelledby="limits-title">
+    <div class="panel-head"><p class="eyebrow">Limits</p><h2 id="limits-title">What this demo does not claim</h2></div>
+    <ul>
+      <li>No model is ever called — "work" is a stub that writes findings. The lab shows what crosses the seam, not what an LLM does with it.</li>
+      <li>Memory isolation is a property check, not a security boundary — real isolation is whatever the runtime gives you.</li>
+      <li>The handoff packet mirrors the contract idea, not any product's wire format.</li>
+      <li>The loop model is serial turns; real bot-to-bot delivery may be per-invocation with no mid-flight interrupt.</li>
+    </ul>
+    <p><a class="try" href="/">Return to Lab</a></p>
+  </section>
+
+  <p class="muted foot"><a href="/">Return to the lab</a> · <a href="https://github.com/anhquanbd2021/agent-teams-no-code">Inspect source and tests</a></p>
+</main>
+<!-- pb-shell --><a class="pb-shell" href="https://github.com/anhquanbd2021/agent-teams-no-code" title="agent-teams-no-code — an Article Playbook demo (view source)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="9" height="9" rx="2" fill="#2dd4bf"/><rect x="13" y="2" width="9" height="9" rx="2" fill="#2dd4bf" opacity=".45"/><rect x="2" y="13" width="9" height="9" rx="2" fill="#2dd4bf" opacity=".45"/><rect x="13" y="13" width="9" height="9" rx="4.5" fill="#2dd4bf"/></svg><b>agent-teams-no-code</b><i>DEMO</i></a><!-- pb-shell --><!-- pb-back --><a class="pb-back" id="pb-back" href="https://github.com/anhquanbd2021/agent-teams-no-code" title="Back to the article — agent-teams-no-code">← Article <i>PLAYBOOK</i></a><script>(function(){var a=document.getElementById('pb-back');if(!a)return;var h=location.hostname;if(/^(localhost|127\.0\.0\.1|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)/.test(h)){a.href='//'+h+':'+(/^(localhost|127\.0\.0\.1)$/.test(h)?'1234':'30082')+'/microsites/article.html?slug=agent-teams-no-code';}})();</script><!-- pb-back --></body>
+</html>

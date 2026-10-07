@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Handoff Lab — configure a bot team, then watch what survives the handoff seam.">
+  <title>Handoff Lab — bot team context simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,600,700,800|JetBrains+Mono:400,700,800&display=swap&subset=vietnamese">
+  <link rel="stylesheet" href="/styles.css">
+<!-- pb-shell --><link rel="stylesheet" href="./pb-shell.css"><!-- pb-shell --><!-- pb-back --><link rel="stylesheet" href="./pb-back.css"><!-- pb-back --></head>
+<body>
+<main>
+  <nav aria-label="Primary"><a aria-current="page" href="/">Lab</a><a href="/guide.html">Guide</a><a href="https://github.com/anhquanbd2021/agent-teams-no-code">Source</a></nav>
+  <header class="hero">
+    <div class="hero-copy"><p class="eyebrow">Handoff Lab · configure-and-run is not the whole job</p><h1>A handoff is a contract, not a message.</h1><p class="lede">Three role cards — researcher, coder, reviewer — run one task through two handoff seams. Flip the mode and watch exactly which context crosses, which dies at the seam, and what isolation and termination actually do.</p></div>
+    <p class="warning"><strong>Safe educational demo.</strong> Everything is simulated in memory in your browser — no models are called, nothing leaves the page.</p>
+  </header>
+
+  <section class="workspace" aria-label="Configure">
+    <section class="panel" aria-labelledby="roster-title">
+      <div class="panel-head"><p class="eyebrow">Role cards</p><h2 id="roster-title">The roster</h2></div>
+      <ul id="roster" class="roster" aria-label="Configured bots"></ul>
+      <p class="muted">Each card pins a model, enables a skill set, and owns private memory — the bundle a no-code UI lets you edit in three fields.</p>
+    </section>
+    <section class="panel" aria-labelledby="task-title">
+      <div class="panel-head"><p class="eyebrow">Task</p><h2 id="task-title">rate-limit-login</h2></div>
+      <p>Add rate limiting to <code>POST /api/login</code> — researcher → coder → reviewer.</p>
+      <div class="toggles" role="radiogroup" aria-label="Handoff mode">
+        <label><input type="radio" name="mode" value="thin"> thin handoff — message only</label>
+        <label><input type="radio" name="mode" value="structured" checked> structured handoff — full packet</label>
+      </div>
+      <div class="btn-stack">
+        <button id="run" type="button">Run the pipeline</button>
+        <button id="run-both" type="button" class="ghost">Compare both modes</button>
+      </div>
+    </section>
+  </section>
+
+  <section class="workspace" aria-label="Transcript">
+    <section class="panel" aria-labelledby="legs-title">
+      <div class="section-heading"><div class="panel-head"><p class="eyebrow">Handoff seams</p><h2 id="legs-title">What crossed the boundary</h2></div><span id="context-score" class="badge" role="status" aria-live="polite">Ready</span></div>
+      <ol id="legs" class="results" aria-label="Handoff legs"></ol>
+    </section>
+    <section class="panel" aria-labelledby="audit-title">
+      <div class="section-heading"><div class="panel-head"><p class="eyebrow">Audit</p><h2 id="audit-title">Every attempt, attributed</h2></div><span id="audit-count" class="badge">0</span></div>
+      <ol id="audit" class="results" aria-label="Audit log"></ol>
+    </section>
+  </section>
+
+  <section class="workspace" aria-label="Isolation and termination">
+    <section class="panel" aria-labelledby="iso-title">
+      <div class="panel-head"><p class="eyebrow">Isolation</p><h2 id="iso-title">Memory is scoped per bot</h2></div>
+      <p class="muted">Try to read another bot's private memory — the denial is logged the same as an allow.</p>
+      <div class="control-grid">
+        <label for="accessor">Acting as<select id="accessor"></select></label>
+        <label for="owner">Read memory of<select id="owner"></select></label>
+      </div>
+      <button id="peek" type="button">Attempt memory read</button>
+      <p class="muted">Skill gating too: ask the researcher to <code>edit-code</code> — its role card never enabled it.</p>
+      <button id="skill-check" type="button" class="ghost">Researcher attempts edit-code</button>
+    </section>
+    <section class="panel" aria-labelledby="loop-title">
+      <div class="section-heading"><div class="panel-head"><p class="eyebrow">Termination</p><h2 id="loop-title">Polite and indefatigable</h2></div><span id="loop-result" class="badge" role="status" aria-live="polite">—</span></div>
+      <p class="muted">Coder ↔ reviewer request-changes loop. No done-condition: it only stops at the round cap.</p>
+      <label for="max-rounds">Round cap<select id="max-rounds"><option>2</option><option selected>4</option><option>6</option><option>10</option></select></label>
+      <div class="toggles">
+        <label><input type="checkbox" id="has-done"> write a done-condition (met at round 2)</label>
+      </div>
+      <button id="loop" type="button">Run the loop</button>
+    </section>
+  </section>
+
+  <p class="muted foot"><a href="/guide.html">Read the guide</a> · <a href="https://github.com/anhquanbd2021/agent-teams-no-code">Inspect source and tests</a></p>
+</main>
+<script type="module" src="/app.js"></script>
+<!-- pb-shell --><a class="pb-shell" href="https://github.com/anhquanbd2021/agent-teams-no-code" title="agent-teams-no-code — an Article Playbook demo (view source)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="2" width="9" height="9" rx="2" fill="#2dd4bf"/><rect x="13" y="2" width="9" height="9" rx="2" fill="#2dd4bf" opacity=".45"/><rect x="2" y="13" width="9" height="9" rx="2" fill="#2dd4bf" opacity=".45"/><rect x="13" y="13" width="9" height="9" rx="4.5" fill="#2dd4bf"/></svg><b>agent-teams-no-code</b><i>DEMO</i></a><!-- pb-shell --><!-- pb-back --><a class="pb-back" id="pb-back" href="https://github.com/anhquanbd2021/agent-teams-no-code" title="Back to the article — agent-teams-no-code">← Article <i>PLAYBOOK</i></a><script>(function(){var a=document.getElementById('pb-back');if(!a)return;var h=location.hostname;if(/^(localhost|127\.0\.0\.1|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)/.test(h)){a.href='//'+h+':'+(/^(localhost|127\.0\.0\.1)$/.test(h)?'1234':'30082')+'/microsites/article.html?slug=agent-teams-no-code';}})();</script><!-- pb-back --></body>
+</html>
